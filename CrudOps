@@ -1,0 +1,146 @@
+
+### Python Example with SQLite
+
+1. **Install SQLite and SQLite3 Library:**
+   ```bash
+   pip install sqlite3
+   ```
+
+2. **CRUD Operations in Python:**
+   ```python
+   import sqlite3
+
+   # Connect to the database
+   conn = sqlite3.connect('example.db')
+   cursor = conn.cursor()
+
+   # Create table
+   cursor.execute('''CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)''')
+
+   # Create (Insert)
+   cursor.execute("INSERT INTO users (name, age) VALUES ('Alice', 30)")
+   conn.commit()
+
+   # Read
+   cursor.execute("SELECT * FROM users")
+   print(cursor.fetchall())
+
+   # Update
+   cursor.execute("UPDATE users SET age = 31 WHERE name = 'Alice'")
+   conn.commit()
+
+   # Delete
+   cursor.execute("DELETE FROM users WHERE name = 'Alice'")
+   conn.commit()
+
+   # Close the connection
+   conn.close()
+   ```
+
+### JavaScript Example with Node.js and MongoDB
+
+1. **Install Node.js and MongoDB Driver:**
+   ```bash
+   npm install mongodb
+   ```
+
+2. **CRUD Operations in JavaScript:**
+   ```javascript
+   const { MongoClient } = require('mongodb');
+
+   async function main() {
+       const uri = "mongodb://localhost:27017";
+       const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+       try {
+           await client.connect();
+           const database = client.db('exampleDB');
+           const collection = database.collection('users');
+
+           // Create (Insert)
+           await collection.insertOne({ name: 'Alice', age: 30 });
+
+           // Read
+           const users = await collection.find({}).toArray();
+           console.log(users);
+
+           // Update
+           await collection.updateOne({ name: 'Alice' }, { $set: { age: 31 } });
+
+           // Delete
+           await collection.deleteOne({ name: 'Alice' });
+
+       } finally {
+           await client.close();
+       }
+   }
+
+   main().catch(console.error);
+   ```
+
+### Java Example with SQLite
+
+1. **Add SQLite JDBC Dependency:**
+   ```xml
+   <!-- Add this to your pom.xml if using Maven -->
+   <dependency>
+       <groupId>org.xerial</groupId>
+       <artifactId>sqlite-jdbc</artifactId>
+       <version>3.34.0</version>
+   </dependency>
+   ```
+
+2. **CRUD Operations in Java:**
+   ```java
+   import java.sql.Connection;
+   import java.sql.DriverManager;
+   import java.sql.PreparedStatement;
+   import java.sql.ResultSet;
+   import java.sql.Statement;
+
+   public class SQLiteExample {
+       public static void main(String[] args) {
+           String url = "jdbc:sqlite:example.db";
+
+           try (Connection conn = DriverManager.getConnection(url)) {
+               if (conn != null) {
+                   Statement stmt = conn.createStatement();
+                   stmt.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)");
+
+                   // Create (Insert)
+                   String insertSQL = "INSERT INTO users(name, age) VALUES(?, ?)";
+                   try (PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
+                       pstmt.setString(1, "Alice");
+                       pstmt.setInt(2, 30);
+                       pstmt.executeUpdate();
+                   }
+
+                   // Read
+                   String selectSQL = "SELECT * FROM users";
+                   try (ResultSet rs = stmt.executeQuery(selectSQL)) {
+                       while (rs.next()) {
+                           System.out.println(rs.getInt("id") + "\t" + rs.getString("name") + "\t" + rs.getInt("age"));
+                       }
+                   }
+
+                   // Update
+                   String updateSQL = "UPDATE users SET age = ? WHERE name = ?";
+                   try (PreparedStatement pstmt = conn.prepareStatement(updateSQL)) {
+                       pstmt.setInt(1, 31);
+                       pstmt.setString(2, "Alice");
+                       pstmt.executeUpdate();
+                   }
+
+                   // Delete
+                   String deleteSQL = "DELETE FROM users WHERE name = ?";
+                   try (PreparedStatement pstmt = conn.prepareStatement(deleteSQL)) {
+                       pstmt.setString(1, "Alice");
+                       pstmt.executeUpdate();
+                   }
+               }
+           } catch (Exception e) {
+               System.out.println(e.getMessage());
+           }
+       }
+   }
+   
